@@ -2,7 +2,9 @@
   <div
     class="flex flex-col items-center max-w-sm bg-white border border-gray-200 rounded-lg shadow hover:shadow-lg transition-shadow dark:bg-gray-800 dark:border-gray-700"
   >
-      <img class="rounded-t-lg aspect-[19/10] w-full" :src="instance.thumbnail.url" alt="" />
+      <object class="rounded-t-lg aspect-[19/10] w-full" :data="instance.thumbnail.url" type="image/png">
+        <img class="rounded-t-lg aspect-[19/10] w-full" src="/img/default-banner.png" alt="" />
+      </object>
       <a :href="instance.instance" class="p-5 inline-flex items-baseline text-blue-600 hover:underline">
         <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
           {{ instance.domain }}
