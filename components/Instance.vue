@@ -5,10 +5,22 @@
       <object class="rounded-t-lg aspect-[19/10] w-full" :data="instance.thumbnail.url" type="image/png">
         <img class="rounded-t-lg aspect-[19/10] w-full" src="/img/default-banner.png" alt="" />
       </object>
-      <a :href="instance.instance" class="p-5 inline-flex items-baseline text-blue-600 hover:underline">
-        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+      <div class="p-5 inline-flex items-baseline text-blue-600 hover:underline">
+        <span v-if="!instance.registrations.enabled" :title="instance.registrations.message">
+          <svg
+            class="w-5 h-5 mr-2"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M6 8v-2c0-3.313 2.687-6 6-6 3.312 0 6 2.687 6 6v2h-2v-2c0-2.206-1.795-4-4-4s-4 1.794-4 4v2h-2zm-3 2v14h18v-14h-18z"
+            />
+          </svg>
+        </span>
+        <a :href="instance.instance" class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
           {{ instance.domain }}
-        </h5>
+        </a>
         <svg
           class="w-5 h-5 ml-2"
           fill="currentColor"
@@ -22,7 +34,7 @@
             d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"
           ></path>
         </svg>
-      </a>
+      </div>
       <p class="px-5 mb-3 font-normal text-gray-700 dark:text-gray-400">
         {{ instance.description }}
       </p>
