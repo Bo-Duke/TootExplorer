@@ -62,6 +62,7 @@
         </div>
       </div>
     </form>
+    <user-info v-if="userDetails" :key="userDetails.id" :details="userDetails" :user="user" />
     <instances-list :instances="instanceList" />
   </div>
 </template>
@@ -75,6 +76,7 @@ const Index = {
   data() {
     return {
       user: null,
+      userDetails: null,
       instanceList: [],
       isLoading: false,
     };
@@ -87,6 +89,7 @@ const Index = {
       const { data: account } = await useFetch(
         `https://${instance}/api/v1/accounts/lookup?acct=${pseudo}`,
       );
+      this.userDetails = account;
       const { data: followings } = await fetchWithHeaders(
         `https://${instance}/api/v1/accounts/${account.value.id}/following`,
       );
