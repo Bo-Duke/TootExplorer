@@ -64,6 +64,7 @@
     </form>
     <user-info v-if="userDetails" :key="userDetails.id" :details="userDetails" :user="user" />
     <instances-list v-if="instanceList" :instances="instanceList" :instance="instance" />
+    <general-error v-if="isError" />
   </div>
 </template>
 
@@ -80,26 +81,34 @@ const Index = {
       instanceList: null,
       instance: null,
       isLoading: false,
+      isError: false,
     };
   },
   methods: {
     async searchUser() {
       this.isLoading = true;
+      this.isError = false;
       this.instanceList = null;
       const regex = /(.*)@(.*)/;
       const [, pseudo, instance] = this.user.match(regex);
-      const { data: account } = await useFetch(
-        `https://${instance}/api/v1/accounts/lookup?acct=${pseudo}`,
-      );
-      this.userDetails = account;
-      const { data: followings } = await fetchWithHeaders(
-        `https://${instance}/api/v1/accounts/${account.value.id}/following`,
-      );
-      const instanceList = generateInstanceList(followings);
-      const instanceDetails = await fetchInstancesDetails(instanceList);
-      this.instance = instance;
-      this.instanceList = instanceDetails;
-      this.isLoading = false;
+      try {
+        const { data: account } = await useFetch(
+          `https://${instance}/api/v1/accounts/lookup?acct=${pseudo}`
+        );
+        this.userDetails = account;
+        const { data: followings } = await fetchWithHeaders(
+          `https://${instance}/api/v1/accounts/${account.value.id}/following`,
+        );
+        const instanceList = generateInstanceList(followings);
+        const instanceDetails = await fetchInstancesDetails(instanceList);
+        this.instance = instance;
+        this.instanceList = instanceDetails;
+        this.isLoading = false;
+      } catch (e) {
+        console.error('Error :', e);
+        this.isLoading = false;
+        this.isError = true;
+      }
     },
   },
 };
