@@ -63,7 +63,7 @@
       </div>
     </form>
     <user-info v-if="userDetails" :key="userDetails.id" :details="userDetails" :user="user" />
-    <instances-list :instances="instanceList" />
+    <instances-list v-if="instanceList" :instances="instanceList" :instance="instance" />
   </div>
 </template>
 
@@ -77,13 +77,15 @@ const Index = {
     return {
       user: null,
       userDetails: null,
-      instanceList: [],
+      instanceList: null,
+      instance: null,
       isLoading: false,
     };
   },
   methods: {
     async searchUser() {
       this.isLoading = true;
+      this.instanceList = null;
       const regex = /(.*)@(.*)/;
       const [, pseudo, instance] = this.user.match(regex);
       const { data: account } = await useFetch(
@@ -95,6 +97,7 @@ const Index = {
       );
       const instanceList = generateInstanceList(followings);
       const instanceDetails = await fetchInstancesDetails(instanceList);
+      this.instance = instance;
       this.instanceList = instanceDetails;
       this.isLoading = false;
     },
