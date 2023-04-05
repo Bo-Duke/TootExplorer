@@ -64,6 +64,7 @@
     </form>
     <user-info v-if="userDetails" :key="userDetails.id" :details="userDetails" :user="user" />
     <instances-list v-if="instanceList" :instances="instanceList" :instance="instance" />
+    <error-instances-list v-if="errorInstanceList.length > 0" :instances="errorInstanceList" />
     <general-error v-if="isError" />
   </div>
 </template>
@@ -79,6 +80,7 @@ const Index = {
       user: null,
       userDetails: null,
       instanceList: null,
+      errorInstanceList: [],
       instance: null,
       isLoading: false,
       isError: false,
@@ -89,6 +91,7 @@ const Index = {
       this.isLoading = true;
       this.isError = false;
       this.instanceList = null;
+      this.errorInstanceList = [];
       const regex = /(.*)@(.*)/;
       const [, pseudo, instance] = this.user.match(regex);
       try {
@@ -100,10 +103,11 @@ const Index = {
           `https://${instance}/api/v1/accounts/${account.value.id}/following`,
         );
         const instanceList = generateInstanceList(followings);
-        const instanceDetails = await fetchInstancesDetails(instanceList);
+        const { updatedInstances: instanceDetails, errorInstances } = await fetchInstancesDetails(instanceList);
         this.instance = instance;
         this.instanceList = instanceDetails;
         this.isLoading = false;
+        this.errorInstanceList = errorInstances;
       } catch (e) {
         console.error('Error :', e);
         this.isLoading = false;

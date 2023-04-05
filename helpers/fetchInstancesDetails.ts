@@ -1,7 +1,8 @@
-import { Instance, InstanceWithInfo } from '~~/types/types';
+import { Instance, InstanceObjects } from '~~/types/types';
 
-export async function fetchInstancesDetails(instances: Instance[]): Promise<InstanceWithInfo[]> {
+export async function fetchInstancesDetails(instances: Instance[]): Promise<InstanceObjects> {
     const updatedInstances = [];
+    const errorInstances = [];
     const instancePromises = instances.map(async (instance) => {
       try {
         const controller = new AbortController();
@@ -18,16 +19,23 @@ export async function fetchInstancesDetails(instances: Instance[]): Promise<Inst
           ...instanceInfo
         };
       } catch (error) {
-        console.error(`Error while fetching info for instance: ${instance.instance}`);
-        return null;
+        console.error(`Error while fetching info for instance: ${instance.instance}`, error);
+        return {
+          instance: instance.instance,
+          users: instance.users,
+          error,
+        };
       }
     });
     const results = await Promise.all(instancePromises);
     for (const result of results) {
-      if (result) {
+      if (result.error) {
+        errorInstances.push(result);
+      }
+      else {
         updatedInstances.push(result);
       }
     }
-    return updatedInstances;
+    return { updatedInstances, errorInstances };
   }
   
