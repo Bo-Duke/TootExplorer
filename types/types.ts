@@ -21,3 +21,5 @@ export interface Instance {
   instance: string;
   users: User[];
 }
+
+export type SortingType = 'smart' | 'friends' | 'users';

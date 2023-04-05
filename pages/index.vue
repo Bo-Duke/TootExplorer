@@ -63,9 +63,17 @@
       </div>
     </form>
     <user-info v-if="userDetails" :key="userDetails.id" :details="userDetails" :user="user" />
+    <general-error v-if="isError" />
+    <div >
+      <label for="sorting" class="text-left block my-2 text-sm font-medium text-gray-900 dark:text-white">Sorting</label>
+      <select @change="sortInstances" v-model="sorting" id="sorting" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+        <option value="smart">Smart (Default)</option>
+        <option value="users">Total users</option>
+        <option value="friends">Friends</option>
+      </select>
+    </div>
     <instances-list v-if="instanceList" :instances="instanceList" :instance="instance" />
     <error-instances-list v-if="errorInstanceList.length > 0" :instances="errorInstanceList" />
-    <general-error v-if="isError" />
   </div>
 </template>
 
@@ -73,6 +81,7 @@
 import { fetchWithHeaders } from '../helpers/fetchAllFollowings';
 import { generateInstanceList } from '../helpers/generateInstanceList';
 import { fetchInstancesDetails } from '../helpers/fetchInstancesDetails';
+import { sortInstances } from '../helpers/sortInstances';
 
 const Index = {
   data() {
@@ -84,6 +93,7 @@ const Index = {
       instance: null,
       isLoading: false,
       isError: false,
+      sorting: 'smart',
     };
   },
   methods: {
@@ -105,7 +115,7 @@ const Index = {
         const instanceList = generateInstanceList(followings);
         const { updatedInstances: instanceDetails, errorInstances } = await fetchInstancesDetails(instanceList);
         this.instance = instance;
-        this.instanceList = instanceDetails;
+        this.instanceList = sortInstances(instanceDetails, this.sorting);
         this.isLoading = false;
         this.errorInstanceList = errorInstances;
       } catch (e) {
@@ -113,6 +123,9 @@ const Index = {
         this.isLoading = false;
         this.isError = true;
       }
+    },
+    sortInstances (event) {
+      this.instanceList = sortInstances(this.instanceList, event.target.value);
     },
   },
 };

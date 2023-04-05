@@ -14,5 +14,5 @@ export const generateInstanceList = (list: User[]): Instance[] => {
       });
     }
     return acc;
-  }, [] as Instance[]).sort((a, b) => b.users.length - a.users.length);
+  }, [] as Instance[]);
 };
